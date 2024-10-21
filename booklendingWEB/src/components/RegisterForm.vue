@@ -27,12 +27,11 @@
 </template>
   
   <script setup name="register">
-  import { ref , defineEmits } from 'vue';
+  import { ref } from 'vue';
   import { localhost } from '@/config'
   import { useRouter } from 'vue-router';
   import axios from 'axios';
 
-  const emit = defineEmits();
   const router = useRouter(); 
   const member_name = ref('');
   const phone_number = ref('');

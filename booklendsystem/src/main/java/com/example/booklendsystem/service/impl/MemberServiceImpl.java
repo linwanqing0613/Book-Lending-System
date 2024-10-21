@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class MemberServiceImpl implements MemberService {
-    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemberServiceImpl.class);
 
     @Autowired
     private MemberDao memberDao;
@@ -45,9 +45,11 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public TokenResponse login(String phone_number) throws Exception {
         String token = tokenUtility.generateToken(phone_number);
+        String member_name = getMemberByPhone(phone_number).getMember_name();
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(token);
-        memberDao.login(phone_number);
+        tokenResponse.setMember_name(member_name);
+
         return tokenResponse;
     }
     @Override

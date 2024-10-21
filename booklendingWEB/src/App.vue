@@ -7,11 +7,15 @@
                 <li class="nav-item dropdown" >
                     <a class="nav-link dropdown-toggle no-arrow" id="navbarScrollingDropdown" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                       
                        <img src="@/assets/user-icon-2.jpg" alt="User Icon" class="user-icon">
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                        <li v-if="!isAuthenticated" class="username-link dropdown-item">{{username}}</li>
                         <li v-if="isAuthenticated"><RouterLink class="dropdown-item" to="/login">登入</RouterLink></li>
                         <li v-if="isAuthenticated"><RouterLink class="dropdown-item" to="/register">註冊</RouterLink></li>
+                        <li v-if="!isAuthenticated"><RouterLink class="dropdown-item" to="/record">借閱紀錄</RouterLink></li>
+                        <li v-if="!isAuthenticated"><RouterLink class="dropdown-item" to="/update">修改個人資料</RouterLink></li>
                         <li v-if="!isAuthenticated"><RouterLink class="dropdown-item dropdown-item-red" to="/" @click="logout">登出</RouterLink></li>
                     </ul>
                 </li>
@@ -25,16 +29,12 @@
 </div>   
 </template>
 <script setup>
-import { RouterView, RouterLink, useRouter} from 'vue-router'
-import { ref } from 'vue';
+import { RouterView, RouterLink} from 'vue-router'
 import { computed } from 'vue';
 import { useAuthStore } from '@/store/auth';
 
-const showRegister = ref(false);
-const showMenu = ref(false);
 const authStore = useAuthStore();
-const router = useRouter();
-
+const username = computed(() => authStore.member_name);
 const isAuthenticated = computed(() => !authStore.token);
 const logout = () =>  authStore.clearToken();
 
@@ -51,6 +51,21 @@ const logout = () =>  authStore.clearToken();
 
 .navbar {
     flex-shrink: 0; /* 防止導覽列收縮 */
+}
+.navbar-brand {
+    font-family: 'Noto Serif', serif; /* 優雅的字體風格 */
+    font-size: 24px; /* 增加字體大小 */
+    color: #007bff; /* 主題色系 */
+    font-weight: bold; /* 粗體顯示 */
+    text-transform: uppercase; /* 字母大寫 */
+    letter-spacing: 2px; /* 增加字母間距 */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* 文字陰影效果 */
+    transition: color 0.3s ease; /* 文字顏色過渡效果 */
+}
+  
+.navbar-brand:hover {
+    color: #0056b3; /* 滑鼠懸停時顏色變深 */
+    text-decoration: none; /* 移除滑鼠懸停時的下劃線 */
 }
 .no-arrow::after {
     display: none; /* 隱藏箭頭圖標 */
@@ -72,7 +87,7 @@ const logout = () =>  authStore.clearToken();
     background-color: #ffffff; /* 背景顏色 */
     min-width: 150px; /* 設定最小寬度 */
     z-index: 1; /* 確保下拉內容在上方 */
-    left: -50px  !important; /* 左對齊 */
+    left: -60px  !important; /* 左對齊 */
     display: none; /* 初始隱藏 */
 }
 .dropdown-item-red {

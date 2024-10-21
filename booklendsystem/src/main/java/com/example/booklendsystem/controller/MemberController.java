@@ -5,6 +5,9 @@ import com.example.booklendsystem.dto.MemberRequest;
 import com.example.booklendsystem.dto.TokenResponse;
 import com.example.booklendsystem.model.Member;
 import com.example.booklendsystem.service.MemberService;
+import com.example.booklendsystem.service.impl.MemberServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/member")
 public class MemberController {
-
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
     @Autowired
     private MemberService memberService;
     @GetMapping("/info")
@@ -29,6 +32,7 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
         TokenResponse token = memberService.login(loginRequest.getPhone_number());
+        logger.info("Controller: " + token.getMember_name());
         return ResponseEntity.ok(token);
     }
     @PostMapping("/update")

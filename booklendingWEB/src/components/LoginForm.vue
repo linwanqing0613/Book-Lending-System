@@ -29,18 +29,19 @@
   const router = useRouter(); 
   const phone_number = ref('');
   const password = ref('');
-  const loginData = {
-    phone_number: phone_number.value,
-    password: password.value
-  };
-  
+
   if (authStore.token) {
     router.push('/')
   }
   const login = async () => {
     try {
-      const response = await axios.post(`${localhost}/member/login`,loginData);
-      authStore.setToken(response.data.token);
+      const loginData = {
+        phone_number: phone_number.value,
+        password: password.value
+      };
+  
+      const { data: { token, member_name}} = await axios.post(`${localhost}/member/login`,loginData);
+      authStore.setToken(token, member_name);
       router.push('/')
     } catch (error) {
       alert('登入失敗');
