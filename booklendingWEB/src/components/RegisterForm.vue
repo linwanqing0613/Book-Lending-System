@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <h2>會員註冊</h2>
+  <div class="registration-container">
+    <h2 class="text-center">會員註冊</h2>
     <form @submit.prevent="register">
-      <div class="mb-3 content-display">
+      <div class="mb-3">
         <label class="form-label">使用者名稱</label>
         <input v-model="member_name" class="form-control" type="text" required />
       </div>
@@ -24,7 +24,7 @@
       </p>
     </form>
   </div>
-  </template>
+</template>
   
   <script setup name="register">
   import { ref , defineEmits } from 'vue';
@@ -63,3 +63,48 @@
     router.push('/login')
   }
   </script>
+<style>
+.registration-container {
+  max-width: 400px; /* 最大寬度 */
+  margin: auto; /* 水平居中 */
+  padding: 20px; /* 內邊距 */
+  border: 1px solid #ddd; /* 邊框 */
+  border-radius: 8px; /* 邊角圓弧 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 陰影效果 */
+  background-color: #fff; /* 背景顏色 */
+}
+
+h2 {
+  margin-bottom: 20px; /* 標題下方的邊距 */
+  color: #333; /* 標題顏色 */
+}
+
+.form-label {
+  font-weight: bold; /* 標籤字體加粗 */
+}
+
+.form-control {
+  border-radius: 4px; /* 輸入框邊角圓弧 */
+  border: 1px solid #ccc; /* 輸入框邊框 */
+  transition: border-color 0.3s; /* 邊框顏色過渡效果 */
+}
+
+.form-control:focus {
+  border-color: #007bff; /* 聚焦時的邊框顏色 */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 聚焦時的陰影效果 */
+}
+
+.btn-primary {
+  background-color: #007bff; /* 按鈕背景顏色 */
+  border-color: #007bff; /* 按鈕邊框顏色 */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3; /* 按鈕懸停時的顏色 */
+  border-color: #0056b3; /* 按鈕懸停時的邊框顏色 */
+}
+
+.text-center {
+  color: #555; /* 文字顏色 */
+}
+</style>

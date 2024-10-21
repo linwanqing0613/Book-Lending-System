@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-4">
-        <h2 class="text-center mb-4">書籍查询</h2>
+        <h2 class="text-center mb-4">書籍查詢</h2>
         
         <form @submit.prevent="getBooks" class="mb-4">
             <div class="input-group">
