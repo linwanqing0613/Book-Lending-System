@@ -3,6 +3,7 @@ package com.example.booklendsystem.controller;
 import com.example.booklendsystem.dto.BookRequest;
 import com.example.booklendsystem.dto.SearchRequest;
 import com.example.booklendsystem.model.Book;
+import com.example.booklendsystem.model.Borrowing;
 import com.example.booklendsystem.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,11 @@ public class BookController {
         Book book = bookService.getBook(ibsn);
         return book != null? ResponseEntity.ok(book): ResponseEntity.notFound().build();
     }
-
+    @GetMapping("/record/{model}")
+    public ResponseEntity<List<Borrowing>> getBorrowingRecord(@RequestHeader("Authorization") String jwt, @PathVariable String model) throws Exception {
+        List<Borrowing> borrowings = bookService.getBorrowingRecord(jwt, model);
+        return borrowings != null? ResponseEntity.ok(borrowings): ResponseEntity.notFound().build();
+    }
     @PostMapping("/book")
     public ResponseEntity<Book> postBook(@RequestBody BookRequest bookRequest){
         Integer inventory_id = bookService.postBook(bookRequest);
@@ -33,8 +38,8 @@ public class BookController {
         return book != null? ResponseEntity.ok(book): ResponseEntity.notFound().build();
     }
     @PutMapping("/book/{inventory_id}/{book_status}")
-    public ResponseEntity<Book> updateBook(@PathVariable Integer inventory_id, @PathVariable String book_status){
-        bookService.updateBook(inventory_id, book_status);
+    public ResponseEntity<Book> updateBook(@RequestHeader("Authorization") String jwt, @PathVariable Integer inventory_id, @PathVariable String book_status){
+        bookService.updateBook(jwt, inventory_id, book_status);
         Book book = bookService.getBookByInventory(inventory_id);
         return book != null? ResponseEntity.ok(book): ResponseEntity.notFound().build();
     }

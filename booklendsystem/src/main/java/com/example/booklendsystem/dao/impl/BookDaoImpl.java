@@ -5,8 +5,9 @@ import com.example.booklendsystem.dao.BookDao;
 import com.example.booklendsystem.dto.BookRequest;
 import com.example.booklendsystem.dto.SearchRequest;
 import com.example.booklendsystem.model.Book;
+import com.example.booklendsystem.model.Borrowing;
 import com.example.booklendsystem.rowmapper.BookRowMapper;
-import com.example.booklendsystem.service.impl.BookServiceImpl;
+import com.example.booklendsystem.rowmapper.BorrowingMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,19 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
+    public List<Borrowing> getBorrowingRecord(Integer member_id, String model) {
+        Map<String, Object> map = new HashMap<>();
+        String sql = "";
+        if("list".equals(model))
+            sql = "call SEARCH_RECORD(:member_id);";
+        else
+            sql = "call SEARCH_BORROWING(:member_id);";
+        map.put("member_id", member_id);
+        List<Borrowing> list = namedParameterJdbcTemplate.query(sql, map,new BorrowingMapper());
+        return list.isEmpty() ? null: list;
+    }
+
+    @Override
     public Book getBookByInventory(Integer inventory_id) {
         Map<String, Object> map = new HashMap<>();
         String sql = "call SELECT_BOOK_BY_INVENTORY(:inventory_id);";
@@ -75,11 +89,20 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public void updateBook(Integer inventory_id, String status) {
+    public void updateBook(Integer member_id, Integer inventory_id, String status) {
         Map<String, Object> map = new HashMap<>();
+        logger.info("UPDATE: "+member_id);
         String sql = "call UPDATE_INVENTORY(:inventory_id, :status);";
         map.put("inventory_id", inventory_id);
         map.put("status", status);
+
+        namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
+        map.clear();
+
+        map.put("member_id", member_id);
+        map.put("inventory_id", inventory_id);
+        sql = "call ADD_BORROWING_RECORD(:member_id, :inventory_id);";
+
         namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
     }
 
@@ -108,7 +131,6 @@ public class BookDaoImpl implements BookDao {
             map.put("isbn", searchRequest.getIsbn());
         }
         logger.info(searchRequest.getIsbn());
-        logger.info(sql);
         List<Book> list = namedParameterJdbcTemplate.query(sql, map,new BookRowMapper());
         return list.isEmpty() ? null: list;
     }

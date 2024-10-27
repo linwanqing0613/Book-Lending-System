@@ -5,7 +5,6 @@ import com.example.booklendsystem.dto.MemberRequest;
 import com.example.booklendsystem.dto.TokenResponse;
 import com.example.booklendsystem.model.Member;
 import com.example.booklendsystem.service.MemberService;
-import com.example.booklendsystem.service.impl.MemberServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class MemberController {
         return ResponseEntity.ok(token);
     }
     @PostMapping("/update")
-    public ResponseEntity<Member> update(@RequestBody MemberRequest memberRequest) throws Exception {
+    public ResponseEntity<Member> update(@RequestBody MemberRequest memberRequest){
         memberService.updateMember(memberRequest);
         Member member = memberService.getMemberByPhone(memberRequest.getPhone_number());
         return ResponseEntity.ok(member);

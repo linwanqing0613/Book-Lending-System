@@ -5,7 +5,9 @@ import com.example.booklendsystem.dao.BookDao;
 import com.example.booklendsystem.dto.BookRequest;
 import com.example.booklendsystem.dto.SearchRequest;
 import com.example.booklendsystem.model.Book;
+import com.example.booklendsystem.model.Borrowing;
 import com.example.booklendsystem.service.BookService;
+import com.example.booklendsystem.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     @Autowired
     private BookDao bookDao;
+    @Autowired
+    private MemberService memberService;
     private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
 
@@ -28,6 +32,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBook(String book_id) {
         return bookDao.getBook(book_id);
+    }
+
+    @Override
+    public List<Borrowing> getBorrowingRecord(String jwt, String model) throws Exception {
+        Integer member_id = memberService.getMemberByJWT(jwt).getMember_id();
+        return bookDao.getBorrowingRecord(member_id, model);
     }
 
     @Override
@@ -47,12 +57,15 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void updateBook(Integer inventory_id, String status) {
+    public void updateBook(String jwt , Integer inventory_id, String status) {
         try {
             StatusCategory check = StatusCategory.valueOf(status);
-            bookDao.updateBook(inventory_id, status);
+            logger.info("Token: "+jwt);
+            bookDao.updateBook(memberService.getMemberByJWT(jwt).getMember_id(), inventory_id, status);
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid status: " + status);
+            logger.info("Invalid status: " + status);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
