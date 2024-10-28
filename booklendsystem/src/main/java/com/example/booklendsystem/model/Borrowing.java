@@ -2,6 +2,8 @@ package com.example.booklendsystem.model;
 
 public class Borrowing {
     Integer record_id;
+    Integer member_id;
+    Integer inventory_id;
     String isbn;
     String name;
     String author;
@@ -14,6 +16,22 @@ public class Borrowing {
 
     public void setRecord_id(Integer record_id) {
         this.record_id = record_id;
+    }
+
+    public Integer getMember_id() {
+        return member_id;
+    }
+
+    public void setMember_id(Integer member_id) {
+        this.member_id = member_id;
+    }
+
+    public Integer getInventory_id() {
+        return inventory_id;
+    }
+
+    public void setInventory_id(Integer inventory_id) {
+        this.inventory_id = inventory_id;
     }
 
     public String getIsbn() {

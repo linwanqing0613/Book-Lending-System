@@ -12,7 +12,7 @@
     <ul class="list-group">
     <li
         v-for="book in books"
-        :key="book.record_id"
+        :key="book.inventory_id"
         class="list-group-item"
     >
     <span class="book-text">{{ book.isbn }}</span>
@@ -20,19 +20,21 @@
     <span class="book-author">{{ book.author }}</span>
     <span class="book-text">{{ book.borrowing_time }}</span>
     <span class="book-button">
-    <button >
+    <button @click="updateBook(book.inventory_id)">
         歸還
     </button>
     </span>
     </li>
     </ul>
 </div>
+<div v-else class="alert alert-info text-center mt-4">
+  未有書籍。
+</div>
 </template>
 <script setup>
 import { ref, onBeforeMount } from 'vue';
 import { localhost } from '@/config'
 import { useAuthStore } from '@/store/auth';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const books = ref([]);
@@ -40,18 +42,37 @@ const authStore = useAuthStore();
 
 async function getBorrowingRecord(){
     try {
-        const response = await axios.get(
-            `${localhost}/record/books`,{
-            headers:{
-                'Authorization':  `Bearer ${authStore.token}`
-            }
-        });
-        books.value = Array.isArray(response.data) ? response.data : [response.data];
+      const response = await axios.get(
+          `${localhost}/record/books`,{
+          headers:{
+              'Authorization':  `Bearer ${authStore.token}`
+          }
+      });
+      books.value = Array.isArray(response.data) ? response.data : [response.data];
+      console.log(books.value);
     } catch (error) {
-        alert("未找到書籍 请檢查您输入的 ISBN。");
+      books.value = [];
     }
 }
 
+async function updateBook(inventory_id){
+    try {
+        if (authStore.token) {
+          const response = await axios.put(`${localhost}/book/${inventory_id}/PREPARATION`,
+          null, {
+          headers: {
+              'Authorization':  `Bearer ${authStore.token}`
+          }
+          });
+          books.value = Array.isArray(response.data) ? response.data : [response.data];
+        }else{
+            alert("請先登入後再進行借閱");
+            router.push('/login')
+        }
+    } catch (error) {
+        
+    }
+}
 // 在組件掛載之前執行
 onBeforeMount(() => {
     getBorrowingRecord();

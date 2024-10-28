@@ -81,7 +81,7 @@ async function getBooks(){
         books.value = Array.isArray(response.data) ? response.data : [response.data];
         connect.value = response.status;
     } catch (error) {
-        alert("未找到書籍 请檢查您输入的 ISBN。");
+        books.value = [];
     }
 }
 async function updateBook(inventory_id, status){
@@ -94,9 +94,9 @@ async function updateBook(inventory_id, status){
                     'Authorization':  `Bearer ${authStore.token}`
                 }
             });
-                books.value = Array.isArray(response.data) ? response.data : [response.data];
+              books.value = Array.isArray(response.data) ? response.data : [response.data];
             }else{
-                alert("該書籍無法借閱");
+              books.value = [];
             }
         }else{
             alert("請先登入後再進行借閱");

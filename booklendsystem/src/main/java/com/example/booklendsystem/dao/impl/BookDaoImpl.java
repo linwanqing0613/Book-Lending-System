@@ -97,15 +97,28 @@ public class BookDaoImpl implements BookDao {
         map.put("status", status);
 
         namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
-        map.clear();
-
+        if("READY".equals(status))
+            status2Ready(member_id, inventory_id);
+        else
+            status2OtherStatus(member_id, inventory_id, status);
+    }
+    public void status2Ready(Integer member_id, Integer inventory_id) {
+        Map<String, Object> map = new HashMap<>();
         map.put("member_id", member_id);
         map.put("inventory_id", inventory_id);
-        sql = "call ADD_BORROWING_RECORD(:member_id, :inventory_id);";
+        String sql = "call ADD_BORROWING_RECORD(:member_id, :inventory_id);";
 
         namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
     }
+    public void status2OtherStatus(Integer member_id, Integer inventory_id, String status) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("member_id", member_id);
+        map.put("inventory_id", inventory_id);
+        map.put("status", status);
+        String sql = "call UPDATE_BORROWING_RECORD(:member_id, :inventory_id, :status);";
 
+        namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
+    }
     @Override
     public Book deleteBookByInventory(Integer inventory_id) {
         return null;

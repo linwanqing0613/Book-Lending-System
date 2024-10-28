@@ -16,6 +16,8 @@ public class BorrowingMapper implements RowMapper<Borrowing> {
         String borrowing_time = String.valueOf(rs.getTimestamp("borrowing_time")).substring(0, 16);
         String return_time = String.valueOf(rs.getTimestamp("return_time"));
         borrowing.setRecord_id(rs.getInt("record_id"));
+        borrowing.setMember_id(rs.getInt("user_id"));
+        borrowing.setInventory_id(rs.getInt("inventory_id"));
         borrowing.setIsbn(rs.getString("isbn"));
         borrowing.setName(rs.getString("name"));
         borrowing.setAuthor(rs.getString("author"));
