@@ -22,8 +22,10 @@
   import { ref } from 'vue';
   import { localhost } from '@/config'
   import { useRouter } from 'vue-router';
+  import { useAuthStore } from '@/store/auth';
   import axios from 'axios';
 
+  const authStore = useAuthStore();
   const router = useRouter(); 
   const member_name = ref('');
   const password = ref('');
@@ -41,7 +43,12 @@
     };
 
     try {
-      const response = await axios.post(`${localhost}/member/update`, updaterData); 
+      const response = await axios.post(`${localhost}/member/update`, updaterData, {
+        headers:{
+          'Authorization':  `Bearer ${authStore.token}`
+        }
+      }); 
+      authStore.member_name = response.data
       alert('更新成功'); 
       router.push('/')
     } catch (error) {

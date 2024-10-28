@@ -37,14 +37,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateMember(MemberRequest memberRequest) {
+    public void updateMember(String jwt, MemberRequest memberRequest) {
+        String phone_number = getPhoneNumber(jwt);
+        memberRequest.setPassword(passwordEncoder.encode(memberRequest.getPassword()));
+        memberRequest.setPhone_number(phone_number);
         memberDao.updateMember(memberRequest);
     }
 
     @Transactional
     public TokenResponse login(String phone_number) throws Exception {
         String token = tokenUtility.generateToken(phone_number);
-        String member_name = getMemberByPhone(phone_number).getMember_name();
+        Member member = getMemberByPhone(phone_number);
+        if(member == null)
+            throw new Exception("Member is not Exist");
+        String member_name = member.getMember_name();
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken(token);
         tokenResponse.setMember_name(member_name);
@@ -61,12 +67,14 @@ public class MemberServiceImpl implements MemberService {
         return memberDao.getMemberById(member_id);
     }
     public Member getMemberByJWT(String jwt) throws Exception{
-        jwt = jwt.substring("Bearer ".length());
-        String phone_number = tokenUtility.extractPhoneNumber(jwt);
-        Member member = memberDao.getMemberByPhone(phone_number);
+        Member member = memberDao.getMemberByPhone(getPhoneNumber(jwt));
         if(member == null){
             throw new Exception("MemberService Error: Invalid JWT");
         }
         return member;
+    }
+    public String getPhoneNumber(String jwt){
+        jwt = jwt.substring("Bearer ".length());
+        return tokenUtility.extractPhoneNumber(jwt);
     }
 }

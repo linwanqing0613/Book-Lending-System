@@ -31,13 +31,12 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
         TokenResponse token = memberService.login(loginRequest.getPhone_number());
-        logger.info("Controller: " + token.getMember_name());
         return ResponseEntity.ok(token);
     }
     @PostMapping("/update")
-    public ResponseEntity<Member> update(@RequestBody MemberRequest memberRequest){
-        memberService.updateMember(memberRequest);
+    public ResponseEntity<String> update(@RequestHeader("Authorization") String jwt, @RequestBody MemberRequest memberRequest){
+        memberService.updateMember(jwt, memberRequest);
         Member member = memberService.getMemberByPhone(memberRequest.getPhone_number());
-        return ResponseEntity.ok(member);
+        return member != null? ResponseEntity.ok(member.getMember_name()): ResponseEntity.notFound().build();
     }
 }

@@ -4,6 +4,8 @@ import com.example.booklendsystem.dao.MemberDao;
 import com.example.booklendsystem.dto.MemberRequest;
 import com.example.booklendsystem.model.Member;
 import com.example.booklendsystem.rowmapper.MemberRowMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,7 +17,7 @@ import java.util.Map;
 
 @Repository
 public class MemberDaoImpl implements MemberDao {
-
+    private static final Logger logger = LoggerFactory.getLogger(MemberDaoImpl.class);
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Override
@@ -53,10 +55,13 @@ public class MemberDaoImpl implements MemberDao {
     public void updateMember(MemberRequest memberRequest) {
         Map<String, Object> map = new HashMap<>();
         String sql = "call UPDATE_MEMBER( :phone_number, :password , :member_name);";
+        logger.info(memberRequest.getMember_name());
+        logger.info(memberRequest.getPassword());
         map.put("phone_number",memberRequest.getPhone_number());
         map.put("password",memberRequest.getPassword());
-        map.put("member_name", memberRequest.getPhone_number());
-        List<Member> list = namedParameterJdbcTemplate.query(sql, map,new MemberRowMapper());
+        map.put("member_name", memberRequest.getMember_name());
+
+        namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
     }
 
     @Override

@@ -49,7 +49,6 @@ async function getBorrowingRecord(){
           }
       });
       books.value = Array.isArray(response.data) ? response.data : [response.data];
-      console.log(books.value);
     } catch (error) {
       books.value = [];
     }
@@ -64,7 +63,7 @@ async function updateBook(inventory_id){
               'Authorization':  `Bearer ${authStore.token}`
           }
           });
-          books.value = Array.isArray(response.data) ? response.data : [response.data];
+          getBorrowingRecord();
         }else{
             alert("請先登入後再進行借閱");
             router.push('/login')

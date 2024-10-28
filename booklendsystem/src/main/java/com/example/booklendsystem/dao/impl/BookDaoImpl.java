@@ -97,12 +97,10 @@ public class BookDaoImpl implements BookDao {
         map.put("status", status);
 
         namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
-        if("READY".equals(status))
-            status2Ready(member_id, inventory_id);
-        else
-            status2OtherStatus(member_id, inventory_id, status);
+        status2OtherStatus(member_id, inventory_id, status);
     }
-    public void status2Ready(Integer member_id, Integer inventory_id) {
+    public void addBorrowingRecord(Integer member_id, Integer inventory_id) {
+        logger.info("ADD BORROWING RECORD... ");
         Map<String, Object> map = new HashMap<>();
         map.put("member_id", member_id);
         map.put("inventory_id", inventory_id);
@@ -111,13 +109,17 @@ public class BookDaoImpl implements BookDao {
         namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
     }
     public void status2OtherStatus(Integer member_id, Integer inventory_id, String status) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("member_id", member_id);
-        map.put("inventory_id", inventory_id);
-        map.put("status", status);
-        String sql = "call UPDATE_BORROWING_RECORD(:member_id, :inventory_id, :status);";
-
-        namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
+        logger.info("UPDATE: "+member_id + " Status: "+status);
+        if("BORROWED".equals(status))
+            addBorrowingRecord(member_id, inventory_id);
+        else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("member_id", member_id);
+            map.put("inventory_id", inventory_id);
+            map.put("status", status);
+            String sql = "call UPDATE_BORROWING_RECORD(:member_id, :inventory_id, :status);";
+            namedParameterJdbcTemplate.update(sql,new MapSqlParameterSource(map));
+        }
     }
     @Override
     public Book deleteBookByInventory(Integer inventory_id) {
